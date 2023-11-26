@@ -1,0 +1,19 @@
+name: tensorflow_gpu
+channels:
+     - defaults
+     - conda-forge
+dependencies:
+     - python=3.7
+     - cudatoolkit=11.2
+     - cudnn=8.1.0
+     - pip
+     - pip:
+            - protobuf
+            - tensorflow==2.10.*
+            - tensorflow-gpu==2.10.*
+            - albumentations
+            - matplotlib
+            - tqdm
+variables:
+     LD_LIBRARY_PATH: "'$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'"
+     #XLA_FLAGS: "'--xla_gpu_cuda_data_dir=$CONDA_PREFIX/lib/'
