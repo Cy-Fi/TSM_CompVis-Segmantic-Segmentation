@@ -44,7 +44,7 @@ class SegmentationDataGenerator():
         self.segmentations = []
         print(f"Loading Segmentation files...")
         for f in tqdm(self.segmentation_files):
-            i = tf.keras.utils.load_img(f)
+            i = tf.keras.utils.load_img(f, color_mode = "grayscale")
             self.segmentations.append(
                 np.array(i).astype('float32')
             )
@@ -109,10 +109,8 @@ class SegmentationDataGenerator():
 
                 # to categorical (used for maskes) - basically one hot encoding
                 categories = tf.keras.utils.to_categorical(segmentations, num_classes=self.num_classes)
-                segmentations = categories.reshape((segmentations.shape[0], segmentations.shape[1], segmentations.shape[2], segmentations.shape[3], self.num_classes))
-    
-                # expand images dim
-                images = np.expand_dims(images, axis=-1)
+                segmentations = categories.reshape((segmentations.shape[0], segmentations.shape[1], segmentations.shape[2], self.num_classes))
+
 
                 yield (images, segmentations) 
 
