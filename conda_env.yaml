@@ -1,0 +1,16 @@
+name: tensorflow
+channels:
+     - defaults
+     - conda-forge
+dependencies:
+     - python=3.7
+     - ipykernel
+     - pip
+     - pip:
+            - protobuf
+            - numpy==1.19.*
+            - tensorflow==2.6.*
+            - segmentation_models==1.0.1
+            - albumentations
+            - matplotlib
+            - tqdm

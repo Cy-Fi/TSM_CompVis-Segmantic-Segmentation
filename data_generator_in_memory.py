@@ -7,7 +7,7 @@ import tensorflow as tf
 from tqdm import tqdm
 import albumentations as A
 
-class SegmentationDataGenerator():
+class SegmentationDataGeneratorInMemory():
     def __init__(self,
                 image_directory,
                 segmentation_directory,
@@ -30,17 +30,35 @@ class SegmentationDataGenerator():
         
         print(f"Indexing Segmentation files...")
         self.segmentation_files = sorted(glob(f"{segmentation_directory}"))
-
-        print(f"Loaded {len(self.img_files)} images with {len(self.segmentation_directory)} segmentations")
         
-        if len(self.img_files) != len(self.segmentation_files):
-            raise Exception(f"Number of images ({len(self.img_files)}) is not equal to number of segmentations ({len(self.segmentation_files)}). ")
-        
-        assert len(self.img_files) >= self.batch_size; "Batch Size must be smaller than number of images"
 
-        self.data = list(zip(self.img_files, self.segmentation_files))
-        del self.img_files
-        del self.segmentation_files
+        # create lists of the images and segmentations in directory
+        self.imgs = []
+        print(f"Loading Image files...")
+        for f in tqdm(self.img_files):
+            i = tf.keras.utils.load_img(f)
+            self.imgs.append(
+                self.normalizer(np.array(i).astype('float32'))
+            )
+
+        self.segmentations = []
+        print(f"Loading Segmentation files...")
+        for f in tqdm(self.segmentation_files):
+            i = tf.keras.utils.load_img(f, color_mode = "grayscale")
+            self.segmentations.append(
+                np.array(i).astype('float32')
+            )
+
+        print(f"Loaded {len(self.imgs)} images with {len(self.segmentations)} segmentations")
+        
+        if len(self.imgs) != len(self.segmentations):
+            raise Exception(f"Number of images ({len(self.imgs)}) is not equal to number of segmentations ({len(self.segmentations)}). ")
+        
+        assert len(self.imgs) >= self.batch_size; "Batch Size must be smaller than number of images"
+
+        self.data = list(zip(self.imgs, self.segmentations))
+        del self.imgs
+        del self.segmentations
 
     def __len__(self) -> int:
         return len(self.data)
@@ -52,7 +70,7 @@ class SegmentationDataGenerator():
                 
     def get_data_generator(self):
 
-        L = self.__len__()
+        L = len(self.data)
 
         #keras needs the generator infinite, so we will use while true  
         while True:
@@ -70,16 +88,8 @@ class SegmentationDataGenerator():
                 images = []
                 segmentations = []
                 
-                for image_path, segmentation_path in self.data[batch_start:limit]:
-                    # load image
-                    i = tf.keras.utils.load_img(image_path)
-                    image = self.normalizer(np.array(i).astype('float32'))
-                    
-                    # load segmentation
-                    i = tf.keras.utils.load_img(segmentation_path, color_mode = "grayscale")
-                    segmentation = np.array(i).astype('float32')
-
-                    # perform augmentation
+                for image, segmentation in self.data[batch_start:limit]:
+                #for img_path, seg_path in self.image_segmentation_dict.items():
                     
                     if self.augmentation != False:
 
