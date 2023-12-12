@@ -64,7 +64,7 @@ class SegmentationDataGeneratorInMemory():
         return len(self.data)
     
     def normalizer(self, image):
-        image =  (image - np.min(image)) / (np.max(image) - np.min(image))
+        image =  (image - np.min(image)) / (np.max(image) - np.min(image) + 1e-9)
         #image = (image - np.mean(image) * np.max(image)) / (np.std(image) * np.max(image))
         return image
                 

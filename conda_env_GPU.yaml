@@ -16,6 +16,8 @@ dependencies:
             - segmentation_models==1.0.1
             - albumentations
             - matplotlib
+            - wandb
+            - pandas
             - tqdm
 variables:
      LD_LIBRARY_PATH: "'$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'"

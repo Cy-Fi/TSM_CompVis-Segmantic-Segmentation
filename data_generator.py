@@ -31,7 +31,7 @@ class SegmentationDataGenerator():
         print(f"Indexing Segmentation files...")
         self.segmentation_files = sorted(glob(f"{segmentation_directory}"))
 
-        print(f"Loaded {len(self.img_files)} images with {len(self.segmentation_directory)} segmentations")
+        print(f"Loaded {len(self.img_files)} images with {len(self.segmentation_files)} segmentations")
         
         if len(self.img_files) != len(self.segmentation_files):
             raise Exception(f"Number of images ({len(self.img_files)}) is not equal to number of segmentations ({len(self.segmentation_files)}). ")
@@ -46,7 +46,7 @@ class SegmentationDataGenerator():
         return len(self.data)
     
     def normalizer(self, image):
-        image =  (image - np.min(image)) / (np.max(image) - np.min(image))
+        image =  (image - np.min(image)) / (np.max(image) - np.min(image) + 1e-9)
         #image = (image - np.mean(image) * np.max(image)) / (np.std(image) * np.max(image))
         return image
                 
